@@ -314,7 +314,7 @@ class MachinesCLI:
           if token and token != "":
             token = token.lower().replace(" [linux]", "").replace(" [windows]", "").strip()
             token = self.corrections[token] if token in self.corrections else token
-  
+
             # token is a name, find url from self.stats
             query = '.machines[] | select(.infrastructure == "hackthebox" and .shortname == "%s") | .url' % (token)
             result = self._json_query(query)
@@ -415,8 +415,12 @@ class MachinesCLI:
 
   def _update_tryhackme(self):
     rooms = self.thmapi.rooms()
+    #print(rooms)
     thmrooms = {}
-    for room in rooms:
+
+
+
+    for room in rooms["rooms"]:
       url = "https://tryhackme.com/room/%s" % (room["code"])
       thmrooms[url] = room
     trackedthm = self._json_query('.machines[] | select(.infrastructure == "tryhackme") | .url')
@@ -445,7 +449,6 @@ class MachinesCLI:
           "owned_root": False,
           "owned_user": False,
           "points": d2p[thmrooms[deltaurl]["difficulty"]],
-          "release": thmrooms[deltaurl]["published"],
           "series": {
             "id": None,
             "name": None,
@@ -455,6 +458,9 @@ class MachinesCLI:
           "url": deltaurl,
           "verbose_id": "tryhackme#%s" % (thmrooms[deltaurl]["code"]),
         }
+
+        if thmrooms[deltaurl]["code"] != "throwback":
+            matchdict["release"] = thmrooms[deltaurl]["published"]
         matchdict["difficulty_ratings"] = None
         self.stats["machines"].append(matchdict)
       utils.info("[update.tryhackme] added %d new machines (total: %d)" % (len(deltathm), len(self._json_query('.machines[] | select(.infrastructure == "tryhackme") | .url'))))

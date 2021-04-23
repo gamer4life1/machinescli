@@ -12,6 +12,27 @@ import prettytable
 from bs4 import BeautifulSoup
 
 
+cookies = {
+'__cfduid': 'df900a5c62717d85402c108339e9222101619198063',
+'cf_chl_2': 'cd1eeb4ead9a261',
+'cf_chl_prog': 'x10',
+'cf_clearance': '15745c5c29a851c0328603a11a58fd7510dba420-1619198063-0-150',
+'DO-LB': 'node-219053868|YIMA1|YIMAc',
+}
+
+headers = {
+'Host': 'tryhackme.com',
+'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0',
+'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+'Content-Type': 'application/json;charset=utf-8',
+'Accept-Language': 'en-US,en;q=0.5',
+'Accept-Encoding': 'gzip, deflate',
+'Connection': 'close',
+'Upgrade-Insecure-Requests': '1',
+'If-None-Match': 'W/\\"1455-mqO5367pbx4mk/5e4eVCOzEr1xo\\"',
+'Cache-Control': 'max-age=0',
+}
+
 def highlight(text, color="black", bold=False):
   resetcode = "\x1b[0m"
   color = color.lower().strip()
@@ -167,25 +188,56 @@ def download(url, filename):
 
 def get_http_res(url, headers={}, requoteuri=False):
   if requoteuri:
-    return requests.get(cleanup_url(requests.utils.requote_uri(url)), headers=headers)
+    return requests.get(cleanup_url(requests.utils.requote_uri(url)), headers=headers, cookies=cookies)
   else:
-    return requests.get(cleanup_url(url), headers=headers)
+    return requests.get(cleanup_url(url), headers=headers, cookies=cookies)
 
 def get_http(url, headers={}, session=None):
   if session:
-    res = session.get(cleanup_url(url), headers=headers)
+    res = session.get(cleanup_url(url), headers=headers, cookies=cookies)
   else:
-    res = requests.get(cleanup_url(url), headers=headers)
+    res = requests.get(cleanup_url(url), headers=headers, cookies=cookies)
   if res.status_code == 200:
     return res.json()
   else:
     return {}
 
+
+def get_bypassed_http(url):
+
+
+  cookies = {
+    '__cfduid': 'df900a5c62717d85402c108339e9222101619198063',
+    'cf_chl_2': 'cd1eeb4ead9a261',
+    'cf_chl_prog': 'x10',
+    'cf_clearance': '15745c5c29a851c0328603a11a58fd7510dba420-1619198063-0-150',
+    'DO-LB': 'node-219053868|YIMA1|YIMAc',
+  }
+
+  headers = {
+    'Host': 'tryhackme.com',
+    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'Accept-Language': 'en-US,en;q=0.5',
+    'Accept-Encoding': 'gzip, deflate',
+    'Connection': 'close',
+    'Upgrade-Insecure-Requests': '1',
+    'If-None-Match': 'W/\\"1455-mqO5367pbx4mk/5e4eVCOzEr1xo\\"',
+    'Cache-Control': 'max-age=0',
+  }
+
+  response = requests.get(url, headers=headers, cookies=cookies)
+  if response.status_code == 200:
+    return response.json()
+  else:
+    return {}
+
+
 def post_http(url, data={}, headers={}, session=None):
   if session:
-    res = session.post(cleanup_url(url), data=json.dumps(data), headers=headers)
+    res = session.post(cleanup_url(url), data=json.dumps(data), headers=headers, cookies=cookies)
   else:
-    res = requests.post(cleanup_url(url), data=json.dumps(data), headers=headers)
+    res = requests.post(cleanup_url(url), data=json.dumps(data), headers=headers, cookies=cookies)
   if res.status_code == 200:
     return res.json()
   else:

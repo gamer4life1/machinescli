@@ -13,7 +13,7 @@ class TryHackMe:
   def _get_http(self, endpoint):
     self.headers["Content-Type"] = "application/json;charset=utf-8"
     url = "%s/%s" % (self.baseurl, endpoint)
-    return utils.get_http(url=url, headers=self.headers)
+    return utils.get_bypassed_http(url)
 
   def _post_http(self, endpoint, data):
     self.headers["Content-Type"] = "application/json;charset=utf-8"
@@ -26,7 +26,7 @@ class TryHackMe:
 
   def rooms(self): ## get details for all walkthroughs and challenges
     # curl -s "https://tryhackme.com/api/hacktivities" | jq
-    return self._get_http(endpoint="/hacktivities")
+    return self._get_http(endpoint="/hacktivities?limit=1000")
 
   def room_details(self, room, verbose=False):
     # curl -s "https://tryhackme.com/api/room/vulnversity" | jq
